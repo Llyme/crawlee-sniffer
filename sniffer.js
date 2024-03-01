@@ -116,7 +116,7 @@ export class Sniffer {
      * 
      * @returns {import("crawlee").CrawlerAddRequestsOptions}
      */
-    async _getCrawlerRequestOptions() {
+    _getCrawlerRequestOptions() {
         return {};
     }
 
@@ -161,6 +161,10 @@ export class Sniffer {
         return request;
     }
 
+    async _afterRun() {
+
+    }
+
     async run() {
         if (this.requests.length == 0)
             return;
@@ -181,7 +185,11 @@ export class Sniffer {
         );
 
         try {
-            return await crawler.run();
+            const result = await crawler.run();
+
+            await this._afterRun();
+
+            return result;
         } catch (e) {
             this._crashHandler(e);
         }
