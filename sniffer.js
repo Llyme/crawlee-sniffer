@@ -139,8 +139,10 @@ export class Sniffer {
      * 
      * @param {string} label 
      * @param {string} url 
+     * @param {*} payload 
+     * @returns {import('crawlee').Source}
      */
-    addRequest(label, url, payload, dataset = {}) {
+    _newRequest(label, url, payload) {
         const uniqueKey = uuidv4();
         const request = {
             label,
@@ -154,7 +156,22 @@ export class Sniffer {
             }
         };
 
-        this.datasets[uniqueKey] = dataset;
+        return request;
+    }
+
+    /**
+     * 
+     * @param {string} label 
+     * @param {string} url 
+     */
+    addRequest(label, url, payload, dataset = {}) {
+        const request = this._newRequest(
+            label,
+            url,
+            payload
+        );
+
+        this.datasets[request.uniqueKey] = dataset;
 
         this.requests.push(request);
 
