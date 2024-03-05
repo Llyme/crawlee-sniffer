@@ -7,6 +7,7 @@ export class Sniffer {
         this.startTime = performance.now();
         this.kwargs = kwargs;
         this.datasets = {};
+        this.payloads = {};
         this.requests = [];
 
         this._initialize();
@@ -136,27 +137,10 @@ export class Sniffer {
     }
 
     /**
-     * 
-     * @param {string} label 
-     * @param {string} url 
-     * @param {*} payload 
-     * @returns {import('crawlee').Source}
+     * @param {string} uniqueKey The key of the request.
      */
-    _newRequest(label, url, payload) {
-        const uniqueKey = uuidv4();
-        const request = {
-            label,
-            url,
-            uniqueKey,
-            userData: {
-                label,
-                url,
-                payload,
-                uniqueKey
-            }
-        };
-
-        return request;
+    getPayload(uniqueKey) {
+        return this.payloads[uniqueKey];
     }
 
     /**
@@ -165,13 +149,20 @@ export class Sniffer {
      * @param {string} url 
      */
     addRequest(label, url, payload, dataset = {}) {
-        const request = this._newRequest(
+        const uniqueKey = uuidv4();
+        const request = {
             label,
             url,
-            payload
-        );
+            uniqueKey,
+            userData: {
+                label,
+                url,
+                uniqueKey
+            }
+        };
 
-        this.datasets[request.uniqueKey] = dataset;
+        this.datasets[uniqueKey] = dataset;
+        this.payloads[uniqueKey] = payload;
 
         this.requests.push(request);
 
