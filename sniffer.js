@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { BasicCrawler } from "crawlee";
+import { BasicCrawler, Configuration } from "crawlee";
 
 
 export class Sniffer {
@@ -115,6 +115,14 @@ export class Sniffer {
 
     /**
      * 
+     * @returns {Configuration}
+     */
+    _getCrawlerConfiguration() {
+        return undefined;
+    }
+
+    /**
+     * 
      * @returns {import("crawlee").CrawlerAddRequestsOptions}
      */
     _getCrawlerRequestOptions() {
@@ -123,10 +131,10 @@ export class Sniffer {
 
     /**
      * @param {import("crawlee").BasicCrawlerOptions} options 
+     * @param {Configuration} configuration 
      * @returns {BasicCrawler} 
      */
-    _newCrawler(options) {
-        return new CheerioCrawler(options);
+    _newCrawler(options, configuration) {
     }
 
     /**
@@ -185,7 +193,7 @@ export class Sniffer {
             },
 
             ...this._getCrawlerOptions()
-        });
+        }, this._getCrawlerConfiguration());
 
         await crawler.addRequests(
             this.requests,

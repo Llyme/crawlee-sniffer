@@ -27,7 +27,7 @@ export class PuppeteerSniffer extends Sniffer {
         return buffer.length;
     }
 
-    _newCrawler(options) {
-        return new PuppeteerCrawler(options);
+    _newCrawler(options, configuration) {
+        return new PuppeteerCrawler(options, configuration);
     }
 }

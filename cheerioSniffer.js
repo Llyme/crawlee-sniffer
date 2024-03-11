@@ -36,7 +36,7 @@ export class CheerioSniffer extends Sniffer {
         return context.response._uploadedSize;
     }
 
-    _newCrawler(options) {
-        return new CheerioCrawler(options);
+    _newCrawler(options, configuration) {
+        return new CheerioCrawler(options, configuration);
     }
 }
