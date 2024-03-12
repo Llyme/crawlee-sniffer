@@ -3,12 +3,16 @@ import { BasicCrawler, Configuration } from "crawlee";
 
 
 export class Sniffer {
+    preventDuplicateURLs = false;
+
+    #datasets = {};
+    #payloads = {};
+    #requests = [];
+    #urls = [];
+
     constructor(kwargs = {}) {
         this.startTime = performance.now();
         this.kwargs = kwargs;
-        this.datasets = {};
-        this.payloads = {};
-        this.requests = [];
 
         this._initialize();
     }
@@ -50,6 +54,15 @@ export class Sniffer {
     }
 
     /**
+     * For `preventDuplicateURLs`.
+     * 
+     * This will allow handled URLs to be handled again.
+     */
+    forgetURLs() {
+        this.#urls = [];
+    }
+
+    /**
      * 
      * @param {Sniffer} sniffer
      * @param {import("crawlee").CrawlingContext} context 
@@ -65,6 +78,13 @@ export class Sniffer {
         const {
             kwargs
         } = sniffer;
+
+        if (sniffer.preventDuplicateURLs) {
+            if (this.#urls.includes(loadedUrl))
+                return;
+
+            this.#urls.push(loadedUrl);
+        }
 
         const elapsedSeconds = await sniffer._getResponseElapsedSeconds(context);
         const rx = await sniffer._getResponseRX(context);
@@ -141,14 +161,14 @@ export class Sniffer {
      * @param {string} uniqueKey The key of the request.
      */
     getDataset(uniqueKey) {
-        return this.datasets[uniqueKey];
+        return this.#datasets[uniqueKey];
     }
 
     /**
      * @param {string} uniqueKey The key of the request.
      */
     getPayload(uniqueKey) {
-        return this.payloads[uniqueKey];
+        return this.#payloads[uniqueKey];
     }
 
     /**
@@ -169,10 +189,10 @@ export class Sniffer {
             }
         };
 
-        this.datasets[uniqueKey] = dataset;
-        this.payloads[uniqueKey] = payload;
+        this.#datasets[uniqueKey] = dataset;
+        this.#payloads[uniqueKey] = payload;
 
-        this.requests.push(request);
+        this.#requests.push(request);
 
         return request;
     }
@@ -182,7 +202,7 @@ export class Sniffer {
     }
 
     async run() {
-        if (this.requests.length == 0)
+        if (this.#requests.length == 0)
             return;
 
         const self = this;
@@ -196,7 +216,7 @@ export class Sniffer {
         }, this._getCrawlerConfiguration());
 
         await crawler.addRequests(
-            this.requests,
+            this.#requests,
             this._getCrawlerRequestOptions()
         );
 
