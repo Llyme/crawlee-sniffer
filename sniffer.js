@@ -34,7 +34,7 @@ export class Sniffer {
      * @param {import("crawlee").CrawlingContext} context 
      */
     async _getResponseElapsedSeconds(context) {
-        return 0;
+        return -1;
     }
 
     /**
@@ -42,7 +42,7 @@ export class Sniffer {
      * @param {import("crawlee").CrawlingContext} context 
      */
     async _getResponseRX(context) {
-        return 0;
+        return -1;
     }
 
     /**
@@ -50,7 +50,7 @@ export class Sniffer {
      * @param {import("crawlee").CrawlingContext} context 
      */
     async _getResponseTX(context) {
-        return 0;
+        return -1;
     }
 
     /**

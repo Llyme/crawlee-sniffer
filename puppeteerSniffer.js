@@ -8,13 +8,17 @@ export class PuppeteerSniffer extends Sniffer {
      * @param {import("crawlee").PuppeteerCrawlingContext} context 
      */
     _getResponseElapsedSeconds(context) {
-        const {
-            receiveHeadersEnd,
-            sendEnd
-        } = context.response.timing();
+        try {
+            const {
+                receiveHeadersEnd,
+                sendEnd
+            } = context.response.timing();
 
 
-        return (receiveHeadersEnd - sendEnd) / 1000;
+            return (receiveHeadersEnd - sendEnd) / 1000;
+        } catch (e) { }
+
+        return -1;
     }
 
     /**
@@ -22,9 +26,13 @@ export class PuppeteerSniffer extends Sniffer {
      * @param {import("crawlee").PuppeteerCrawlingContext} context 
      */
     async _getResponseRX(context) {
-        const buffer = await context.response.buffer();
+        try {
+            const buffer = await context.response.buffer();
 
-        return buffer.length;
+            return buffer.length;
+        } catch (e) { }
+
+        return -1;
     }
 
     _newCrawler(options, configuration) {

@@ -8,16 +8,20 @@ export class CheerioSniffer extends Sniffer {
      * @param {import("crawlee").CheerioCrawlingContext} context 
      */
     async _getResponseElapsedSeconds(context) {
-        const {
-            response: {
-                timings: {
-                    end,
-                    start
+        try {
+            const {
+                response: {
+                    timings: {
+                        end,
+                        start
+                    }
                 }
-            }
-        } = context;
+            } = context;
 
-        return (end - start) / 1000;
+            return (end - start) / 1000;
+        } catch (e) { }
+
+        return -1;
     }
 
     /**
@@ -25,7 +29,11 @@ export class CheerioSniffer extends Sniffer {
      * @param {import("crawlee").CheerioCrawlingContext} context 
      */
     async _getResponseRX(context) {
-        return context.response._downloadedSize;
+        try {
+            return context.response._downloadedSize;
+        } catch (e) { }
+
+        return -1;
     }
 
     /**
@@ -33,7 +41,11 @@ export class CheerioSniffer extends Sniffer {
      * @param {import("crawlee").CheerioCrawlingContext} context 
      */
     async _getResponseTX(context) {
-        return context.response._uploadedSize;
+        try {
+            return context.response._uploadedSize;
+        } catch (e) { }
+
+        return -1;
     }
 
     _newCrawler(options, configuration) {
