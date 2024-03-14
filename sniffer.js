@@ -71,7 +71,7 @@ export class Sniffer {
         const {
             log,
             request: {
-                loadedUrl
+                url
             }
         } = context;
 
@@ -80,17 +80,17 @@ export class Sniffer {
         } = sniffer;
 
         if (sniffer.preventDuplicateURLs) {
-            if (this.#urls.includes(loadedUrl))
+            if (this.#urls.includes(url))
                 return;
 
-            this.#urls.push(loadedUrl);
+            this.#urls.push(url);
         }
 
         const elapsedSeconds = await sniffer._getResponseElapsedSeconds(context);
         const rx = await sniffer._getResponseRX(context);
         const tx = await sniffer._getResponseTX(context);
 
-        log.info(`Crawling URL '${loadedUrl}'...`);
+        log.info(`Crawling URL '${url}'...`);
 
         await sniffer._requestHandler({
             ...context,
@@ -103,7 +103,7 @@ export class Sniffer {
         });
 
         log.info(
-            `[${elapsedSeconds.toFixed(2)}/${sniffer.lifetime.toFixed(2)}s] URL '${loadedUrl}' done.`
+            `[${elapsedSeconds.toFixed(2)}/${sniffer.lifetime.toFixed(2)}s] URL '${url}' done.`
         );
 
         console.log('');
