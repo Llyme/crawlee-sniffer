@@ -9,12 +9,12 @@ export class PuppeteerSniffer extends Sniffer {
      */
     _getResponseElapsedSeconds(context) {
         const {
-            startTime,
-            responseEnd
+            receiveHeadersEnd,
+            sendEnd
         } = context.response.timing();
 
 
-        return (responseEnd - startTime) / 1000;
+        return (receiveHeadersEnd - sendEnd) / 1000;
     }
 
     /**
