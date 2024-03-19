@@ -215,7 +215,7 @@ export class Sniffer {
             ...this._getCrawlerOptions()
         };
 
-        async function hookWrapper(hook) {
+        function hookWrapper(hook) {
             return async function (context, ...args) {
                 return await hook(
                     {
