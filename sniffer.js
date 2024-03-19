@@ -127,7 +127,7 @@ export class Sniffer {
 
     /**
      * 
-     * @returns {import("crawlee").BasicCrawlerOptions}
+     * @returns {import("crawlee").HttpCrawlerOptions}
      */
     _getCrawlerOptions() {
         return {};
@@ -205,15 +205,41 @@ export class Sniffer {
         if (this.#requests.length == 0)
             return;
 
-        const self = this;
+        const sniffer = this;
 
-        const crawler = this._newCrawler({
+        const options = {
             async requestHandler(context) {
-                await self.#requestHandler(self, context);
+                await sniffer.#requestHandler(sniffer, context);
             },
 
             ...this._getCrawlerOptions()
-        }, this._getCrawlerConfiguration());
+        };
+
+        async function hookWrapper(hook) {
+            return async function (context, ...args) {
+                return await hook(
+                    {
+                        ...context,
+                        ...sniffer.kwargs,
+                        sniffer
+                    },
+                    ...args
+                );
+            };
+        }
+
+        if (options.preNavigationHooks != null)
+            options.preNavigationHooks =
+                options.preNavigationHooks.map(hookWrapper);
+
+        if (options.postNavigationHooks != null)
+            options.postNavigationHooks =
+                options.postNavigationHooks.map(hookWrapper);
+
+        const crawler = this._newCrawler(
+            options,
+            this._getCrawlerConfiguration()
+        );
 
         await crawler.addRequests(
             this.#requests,
