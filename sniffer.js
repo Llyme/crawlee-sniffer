@@ -208,6 +208,10 @@ export class Sniffer {
         const sniffer = this;
 
         const rawOptions = this._getCrawlerOptions();
+        const {
+            errorHandler,
+            failedRequestHandler
+        } = rawOptions;
         const options = {
             async requestHandler(context) {
                 await sniffer.#requestHandler(sniffer, context);
@@ -216,10 +220,10 @@ export class Sniffer {
             ...rawOptions,
 
             async errorHandler(context, e) {
-                if (!('errorHandler' in rawOptions))
+                if (errorHandler == null)
                     return;
 
-                return await rawOptions.errorHandler(
+                return await errorHandler(
                     {
                         ...context,
                         ...sniffer.kwargs,
@@ -228,6 +232,20 @@ export class Sniffer {
                     e
                 );
             },
+
+            async failedRequestHandler(context, e) {
+                if (failedRequestHandler == null)
+                    return;
+
+                return await failedRequestHandler(
+                    {
+                        ...context,
+                        ...sniffer.kwargs,
+                        sniffer
+                    },
+                    e
+                );
+            }
         };
 
         function hookWrapper(hook) {
