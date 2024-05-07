@@ -219,7 +219,14 @@ export class Sniffer {
                 if (!('errorHandler' in rawOptions))
                     return;
 
-                return await rawOptions.errorHandler(context, e);
+                return await rawOptions.errorHandler(
+                    {
+                        ...context,
+                        ...sniffer.kwargs,
+                        sniffer
+                    },
+                    e
+                );
             },
         };
 
